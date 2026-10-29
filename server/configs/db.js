@@ -10,7 +10,7 @@ const connectDB = async () => {
             console.error('❌ MongoDB connection error:', err.message);
         });
 
-        const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/pingup';
+        const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/vibly';
         await mongoose.connect(uri);
     } catch (error) {
         console.warn('⚠️ MongoDB connection could not be established:', error.message);
