@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useUser, useAuth } from '@clerk/clerk-react';
 import { api } from '../api/api.js';
-import { dummyUserData } from '../assets/assets.js';
+import { dummyUserData } from '../assets/assets.js'; // minimal placeholder only
 
 export const AppContext = createContext(null);
 
@@ -20,7 +20,7 @@ export const AppProvider = ({ children }) => {
         getToken = null;
     }
 
-    const [currentUser, setCurrentUser] = useState(dummyUserData);
+    const [currentUser, setCurrentUser] = useState(null);
     const [posts, setPosts] = useState([]);
     const [stories, setStories] = useState([]);
     const [connectionsData, setConnectionsData] = useState({
@@ -56,21 +56,20 @@ export const AppProvider = ({ children }) => {
     useEffect(() => {
         const initUser = async () => {
             const token = await getAuthToken();
-            const userId = clerkUser?.id || dummyUserData._id;
+            const userId = clerkUser?.id;
 
             if (clerkUser) {
                 const updatedUser = {
-                    ...dummyUserData,
                     _id: clerkUser.id,
-                    email: clerkUser.primaryEmailAddress?.emailAddress || dummyUserData.email,
-                    full_name: clerkUser.fullName || dummyUserData.full_name,
-                    username: clerkUser.username || clerkUser.primaryEmailAddress?.emailAddress?.split('@')[0] || dummyUserData.username,
-                    profile_picture: clerkUser.imageUrl || dummyUserData.profile_picture,
+                    email: clerkUser.primaryEmailAddress?.emailAddress || '',
+                    full_name: clerkUser.fullName || '',
+                    username: clerkUser.username || clerkUser.primaryEmailAddress?.emailAddress?.split('@')[0] || '',
+                    profile_picture: clerkUser.imageUrl || null,
                 };
                 setCurrentUser(updatedUser);
-            } else {
+            } else if (userId) {
                 const user = await api.getCurrentUser(token, userId);
-                setCurrentUser(user);
+                if (user) setCurrentUser(user);
             }
         };
 
